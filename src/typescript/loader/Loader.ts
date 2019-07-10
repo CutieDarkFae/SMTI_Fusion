@@ -150,7 +150,7 @@ class Loader {
         ));
         
         this.demons.push(new Demon(
-            "Asparas", 
+            "Apsaras", 
             Alignment.Law,
             Species.Magica,
             Race.Yoma,

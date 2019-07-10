@@ -1,9 +1,11 @@
 import { Loader } from "./loader/Loader";
 import { Demon } from "./types/Demon";
 import { Race } from "./types/Race";
+import { FusionResult, DemonPair } from "./types/FusionResult";
+import { FamilyCombination } from "./types/FamilyCombination";
 
 class Fusion {
-    fuse(name:String):String {
+    reverseFuse(name:String):FusionResult {
         // first find the demon they want
         let loader = new Loader();
         loader.load();
@@ -33,7 +35,8 @@ class Fusion {
         //          for every demon in family 2
         //              if (demon1.level + demon2.level within fusion range) return combination
         
-        let possibleCombinations = "";
+        let possibleCombinations:DemonPair[] = [];
+        let fusionCost = Math.trunc(Math.pow(desiredDemon.level, 2)/2);
 
         desiredDemon.familyCombinations.forEach(fc => {
             let family1 = this.getDemonFamily(loader.demons, fc.family1);
@@ -42,15 +45,12 @@ class Fusion {
                 family2.forEach(demon2 => {
                     let combinedLevel = demon1.level + demon2.level;
                     if (fusionRangeLower <= combinedLevel && combinedLevel <= fusionRangeUpper) {
-                        possibleCombinations += "[" + demon1.name + ", " + demon2.name + "]";
+                        possibleCombinations.push(new DemonPair(demon1, demon2));
                     }
                 })
             })
         });
-        if (possibleCombinations.length == 0) {
-            possibleCombinations = "No possible combinations";
-        }
-        return possibleCombinations;
+        return new FusionResult(name, possibleCombinations, fusionCost);
     }
 
     getDemonFamily(demons: Demon[], race: Race) : Demon[] {
@@ -65,4 +65,5 @@ class Fusion {
 }
 
 let fusion = new Fusion();
-console.log(fusion.fuse("Succubus"));
+console.log(fusion.reverseFuse("Succubus").toString());
+document.body.textContent = fusion.reverseFuse("Succubus").toString();
